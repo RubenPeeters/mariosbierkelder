@@ -18,7 +18,7 @@ export type Beer = {
   color?: BeerColor;
   percentage: number;
   type: BeerType;
-  imageURL: string;
+  imageUrl: string;
 } & CommonFields;
 
 export type User = { email: string } & CommonFields;
