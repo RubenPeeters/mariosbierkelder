@@ -8,6 +8,8 @@ export async function middleware(req: NextRequest) {
     const res = NextResponse.next()
     
     // specific pages that are public
+    // TODO: change to better expression
+
     if (req.nextUrl.pathname === '/') {
         return res
     }

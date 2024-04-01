@@ -43,5 +43,6 @@ export const useBeers = () => {
         getBeers,
         success,
         setSuccess,
+        useBeer
       }
     }

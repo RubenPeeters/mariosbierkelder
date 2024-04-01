@@ -1,5 +1,5 @@
 type CommonFields = {
-  id?: string;
+  id: string;
   created_at?: string;
 };
 

@@ -15,7 +15,13 @@ import {
 import { Button } from "./ui/button";
 import BeerIcon from "./beer-icon";
 
-export default function BeerCard({ beer }: { beer: Beer }) {
+export default function BeerCard({
+  beer,
+  onClick,
+}: {
+  beer: Beer;
+  onClick: any;
+}) {
   const { loading, setLoading } = useBeers();
 
   useEffect(() => {
@@ -44,10 +50,12 @@ export default function BeerCard({ beer }: { beer: Beer }) {
         </CardTitle>
       </CardHeader>
       <CardFooter className="flex w-full justify-between">
-        <div className="flex items-center justify-center h-10 w-18 border px-6 rounded-lg text-center">
+        <div className="flex items-center justify-center h-10 w-18 border px-6 rounded-lg text-center font-bold text-gray-500">
           {beer.count}
         </div>
-        <Button className="bg-red-600">Choose</Button>
+        <Button className="bg-red-600" onClick={onClick}>
+          Choose
+        </Button>
       </CardFooter>
     </Card>
   );
