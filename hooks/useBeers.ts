@@ -4,6 +4,7 @@ import { useState } from "react";
 
 export function useBeer() {
     const [beer, setBeer] = useState<Beer>({
+        id: '',
         name: 'A beer',
         count: 0,
         color: BeerColorArray[0],

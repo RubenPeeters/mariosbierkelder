@@ -18,6 +18,9 @@ export async function middleware(req: NextRequest) {
         return res
     }
 
+    if (req.nextUrl.pathname === '/admin') {
+        return res
+    }
     // stop people based on their session
 
     const supabase = createMiddlewareClient({req, res})
