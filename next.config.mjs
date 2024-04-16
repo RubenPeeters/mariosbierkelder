@@ -5,9 +5,6 @@ const nextConfig = {
       {
         hostname: "utfs.io"
       },
-      {
-        hostname: "files.oaiusercontent.com"
-      }
     ],
   },
 };
