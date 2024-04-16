@@ -3,17 +3,11 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "cdn.pixabay.com",
-        port: "",
-        pathname: "/**",
+        hostname: "utfs.io"
       },
       {
-        protocol: "https",
-        hostname: "files.oaiusercontent.com",
-        port: "",
-        pathname: "/**",
-      },
+        hostname: "files.oaiusercontent.com"
+      }
     ],
   },
 };
