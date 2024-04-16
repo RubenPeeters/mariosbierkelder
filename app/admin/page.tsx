@@ -26,7 +26,7 @@ export default function Beers() {
           </>
         )}
         {!loading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+          <div className="flex flex-wrap gap-6 justify-center w-full">
             {beers.length > 0 &&
               beers.map((beer: Beer, i: number) => (
                 <BeerCard key={i} beer={beer} />

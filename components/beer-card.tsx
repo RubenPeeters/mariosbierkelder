@@ -6,6 +6,7 @@ import Image from "next/image";
 
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import BeerIcon from "./beer-icon";
+import { truncateText } from "@/lib/utils";
 
 export default function BeerCard({ beer }: { beer: Beer }) {
   const { loading, setLoading } = useBeers();
@@ -30,12 +31,21 @@ export default function BeerCard({ beer }: { beer: Beer }) {
             <BeerIcon></BeerIcon>
           )}
           <div className="flex justify-center gap-2 items-end align-baseline">
-            <p>{beer.name}</p>
+            <p className="text-xl">{truncateText(beer.name, 18)}</p>
             <span className="text-xs text-gray-400">{beer.percentage}%</span>
           </div>
         </CardTitle>
       </CardHeader>
-      <CardFooter className="flex w-full justify-end">
+      <CardFooter className="flex w-full justify-between">
+        {beer.count > 0 ? (
+          <div className="flex items-center justify-center h-10 w-18 bg-green-100 px-6 rounded-lg text-center font-bold text-green-500 text-xl">
+            ✓
+          </div>
+        ) : (
+          <div className="flex items-center justify-center h-10 w-18 bg-red-100 px-6 rounded-lg text-center font-bold text-red-500 text-xl">
+            ✘
+          </div>
+        )}
         <div className="flex items-center justify-center h-10 w-18 border-2 border-red-600 px-6 rounded-lg text-center font-bold">
           {beer.count}
         </div>
