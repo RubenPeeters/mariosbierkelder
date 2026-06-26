@@ -130,8 +130,14 @@ export default function Admin() {
       {adding && (
         <form onSubmit={addBeer} className="grid grid-cols-2 gap-3 mb-8 p-4 border rounded-xl bg-white shadow-sm">
           <input className="border rounded px-3 py-2 col-span-2" placeholder={t("name")} required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <input className="border rounded px-3 py-2" type="number" placeholder={t("count")} min={0} value={form.count} onChange={(e) => setForm({ ...form, count: Number(e.target.value) })} />
-          <input className="border rounded px-3 py-2" type="number" step="0.1" placeholder={t("abv")} min={0} value={form.percentage} onChange={(e) => setForm({ ...form, percentage: Number(e.target.value) })} />
+          <label className="flex flex-col gap-1">
+            <span className="text-xs text-gray-500">{t("count")}</span>
+            <input className="border rounded px-3 py-2" type="number" min={0} value={form.count} onChange={(e) => setForm({ ...form, count: Number(e.target.value) })} />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="text-xs text-gray-500">{t("abv")}</span>
+            <input className="border rounded px-3 py-2" type="number" step="0.1" min={0} value={form.percentage} onChange={(e) => setForm({ ...form, percentage: Number(e.target.value) })} />
+          </label>
           <select className="border rounded px-3 py-2" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
             {BeerTypeArray.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
