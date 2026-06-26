@@ -1,10 +1,12 @@
+import Link from "next/link";
+
 export default function PageShell({ title, children, wide = false }: { title: string; children: React.ReactNode; wide?: boolean }) {
   return (
     <div className="flex flex-col justify-center items-center w-full bg-background min-h-screen">
       <header className="fixed top-0 left-0 z-10 flex justify-between items-center w-full py-4 sm:py-10 px-4 sm:px-8 bg-background">
-        <a href="/" className="text-xs text-muted-foreground hover:text-foreground">Home</a>
+        <Link href="/" className="text-xs text-muted-foreground hover:text-foreground">Home</Link>
         <h1 className="text-2xl sm:text-3xl font-semibold decoration-amber-600 underline">{title}</h1>
-        <a href="/admin" className="text-xs text-muted-foreground hover:text-foreground">Admin</a>
+        <Link href="/admin" className="text-xs text-muted-foreground hover:text-foreground">Admin</Link>
       </header>
       <main className={`${wide ? "max-w-7xl" : "max-w-3xl"} w-full pt-20 sm:pt-36 px-3 sm:px-4`}>
         {children}
