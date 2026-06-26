@@ -54,13 +54,13 @@ export default function BeerCard({ beer, showOrder = false }: { beer: Beer; show
             ) : (
               <BeerIcon />
             )}
-            <div className="flex flex-col items-center gap-1">
+            <div className="flex justify-center gap-2 items-end align-baseline">
               <p className="text-xl">{truncateText(beer.name, 18)}</p>
-              <span className="text-xs text-gray-400">{beer.percentage}% ABV</span>
+              <span className="text-xs text-gray-400">{beer.percentage}%</span>
             </div>
           </CardTitle>
         </CardHeader>
-        <CardFooter className="flex w-full justify-between pb-6">
+        <CardFooter className="flex w-full justify-between">
           {showOrder ? (
             orderId ? (
               <button onClick={(e) => { e.stopPropagation(); undo(); }} className="flex items-center justify-center min-h-[44px] px-6 bg-amber-500 text-white rounded-lg font-bold hover:bg-amber-600">
@@ -76,9 +76,8 @@ export default function BeerCard({ beer, showOrder = false }: { beer: Beer; show
           ) : (
             <div className="flex items-center justify-center h-10 w-18 bg-red-100 px-6 rounded-lg text-center font-bold text-red-500 text-xl">✘</div>
           )}
-          <div className="flex flex-col items-center justify-center min-h-[44px] w-18 border-2 border-amber-600 px-4 rounded-lg text-center">
-            <span className="font-bold">{beer.count}</span>
-            <span className="text-[10px] text-gray-400">stock</span>
+          <div className="flex items-center justify-center min-h-[44px] w-18 border-2 border-amber-600 px-6 rounded-lg text-center font-bold">
+            {beer.count}
           </div>
         </CardFooter>
       </Card>
