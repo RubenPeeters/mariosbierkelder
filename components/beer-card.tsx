@@ -54,9 +54,9 @@ export default function BeerCard({ beer, showOrder = false }: { beer: Beer; show
             ) : (
               <BeerIcon />
             )}
-            <div className="flex justify-center gap-2 items-end align-baseline">
+            <div className="flex flex-col items-center gap-1">
               <p className="text-xl">{truncateText(beer.name, 18)}</p>
-              <span className="text-xs text-gray-400">{beer.percentage}%</span>
+              <span className="text-xs text-gray-400">{beer.percentage}% ABV</span>
             </div>
           </CardTitle>
         </CardHeader>
@@ -76,8 +76,9 @@ export default function BeerCard({ beer, showOrder = false }: { beer: Beer; show
           ) : (
             <div className="flex items-center justify-center h-10 w-18 bg-red-100 px-6 rounded-lg text-center font-bold text-red-500 text-xl">✘</div>
           )}
-          <div className="flex items-center justify-center min-h-[44px] w-18 border-2 border-amber-600 px-6 rounded-lg text-center font-bold">
-            {beer.count}
+          <div className="flex flex-col items-center justify-center min-h-[44px] w-18 border-2 border-amber-600 px-4 rounded-lg text-center">
+            <span className="font-bold">{beer.count}</span>
+            <span className="text-[10px] text-gray-400">stock</span>
           </div>
         </CardFooter>
       </Card>
