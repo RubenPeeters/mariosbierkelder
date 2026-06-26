@@ -1,54 +1,108 @@
 "use client";
-import BeerCard from "@/components/beer-card";
 import Loading from "@/components/loading";
+import PageShell from "@/components/page-shell";
 import { useBeers } from "@/hooks/useBeers";
-import { Beer } from "@/types";
+import { Beer, BeerColorArray, BeerTypeArray } from "@/types";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Minus, Plus, Trash2 } from "lucide-react";
+import { truncateText } from "@/lib/utils";
 
-export default function Beers() {
+export default function Admin() {
   const { loading, beers, getBeers } = useBeers();
+  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    count: 0,
+    color: BeerColorArray[0],
+    percentage: 0,
+    type: BeerTypeArray[0],
+    imageUrl: "",
+  });
 
   useEffect(() => {
     getBeers();
   }, []);
 
+  const updateCount = async (beer: Beer, delta: number) => {
+    const newCount = Math.max(0, beer.count + delta);
+    await fetch(`/api/beers/${beer.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ count: newCount }),
+    });
+    getBeers();
+  };
+
+  const deleteBeer = async (id: string) => {
+    await fetch(`/api/beers/${id}`, { method: "DELETE" });
+    getBeers();
+  };
+
+  const addBeer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await fetch("/api/beers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    setForm({ name: "", count: 0, color: BeerColorArray[0], percentage: 0, type: BeerTypeArray[0], imageUrl: "" });
+    setAdding(false);
+    getBeers();
+  };
+
   return (
-    <div className="flex flex-col justify-center items-center w-full bg-gray-100">
-      <header className="fixed top-0 left-0 z-5 flex justify-evenly items-center w-full py-10 bg-gray-100">
-        <h1 className="text-3xl font-semibold decoration-red-600 underline">
-          CELLAR
-        </h1>
-      </header>
-      <main className="max-w-7xl bg-gray-100 pt-36">
-        {loading && (
-          <>
-            <Loading />
-          </>
-        )}
-        {!loading && (
-          <div className="flex flex-wrap gap-6 justify-center w-full">
-            {beers.length > 0 &&
-              beers.map((beer: Beer, i: number) => (
-                <BeerCard key={i} beer={beer} />
-              ))}
-            {beers.length === 0 && (
-              <div className="grid gap-4 items-center justify-center w-full py-24 border rounded-xl shadow-sm">
-                <p>No beers yet.</p>
+    <PageShell title="ADMIN">
+      <div className="flex justify-end mb-6">
+        <Button onClick={() => setAdding(!adding)}>
+          {adding ? "Cancel" : "+ Add Beer"}
+        </Button>
+      </div>
+
+      {adding && (
+        <form onSubmit={addBeer} className="grid grid-cols-2 gap-3 mb-8 p-4 border rounded-xl bg-white shadow-sm">
+          <input className="border rounded px-3 py-2 col-span-2" placeholder="Name" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <input className="border rounded px-3 py-2" type="number" placeholder="Count" min={0} value={form.count} onChange={(e) => setForm({ ...form, count: Number(e.target.value) })} />
+          <input className="border rounded px-3 py-2" type="number" step="0.1" placeholder="ABV %" min={0} value={form.percentage} onChange={(e) => setForm({ ...form, percentage: Number(e.target.value) })} />
+          <select className="border rounded px-3 py-2" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
+            {BeerTypeArray.map((t) => <option key={t} value={t}>{t}</option>)}
+          </select>
+          <select className="border rounded px-3 py-2" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })}>
+            {BeerColorArray.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <input className="border rounded px-3 py-2 col-span-2" placeholder="Image URL (optional)" value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} />
+          <Button type="submit" className="col-span-2">Save</Button>
+        </form>
+      )}
+
+      {loading && <Loading />}
+      {!loading && (
+        <div className="flex flex-col gap-2">
+          {beers.map((beer: Beer) => (
+            <div key={beer.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm">
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold">{truncateText(beer.name, 24)}</p>
+                <p className="text-xs text-gray-400">{beer.type} · {beer.percentage}%</p>
               </div>
-            )}
-          </div>
-        )}
-      </main>
-      <footer className="flex h-48 justify-center items-center">
-        <div className="text-xs p-6">
-          <p>
-            Created by{" "}
-            <a className="text-red-500" href="https://pragmix.io">
-              PragmiX
-            </a>
-          </p>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="icon" onClick={() => updateCount(beer, -1)} disabled={beer.count === 0}>
+                  <Minus className="w-4 h-4" />
+                </Button>
+                <span className="w-8 text-center font-bold">{beer.count}</span>
+                <Button variant="outline" size="icon" onClick={() => updateCount(beer, 1)}>
+                  <Plus className="w-4 h-4" />
+                </Button>
+                <Button variant="destructive" size="icon" onClick={() => deleteBeer(beer.id)}>
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          ))}
+          {beers.length === 0 && (
+            <div className="text-center py-12 text-gray-400">No beers yet. Add one above.</div>
+          )}
         </div>
-      </footer>
-    </div>
+      )}
+    </PageShell>
   );
 }

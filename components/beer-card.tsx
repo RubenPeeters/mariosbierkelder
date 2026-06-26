@@ -1,34 +1,31 @@
 "use client";
 import { Beer } from "@/types";
-import { useEffect } from "react";
-import { useBeers } from "@/hooks/useBeers";
 import Image from "next/image";
-
+import { useRouter } from "next/navigation";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import BeerIcon from "./beer-icon";
 import { truncateText } from "@/lib/utils";
 
-export default function BeerCard({ beer }: { beer: Beer }) {
-  const { loading, setLoading } = useBeers();
+export default function BeerCard({ beer, showOrder = false }: { beer: Beer; showOrder?: boolean }) {
+  const router = useRouter();
 
-  useEffect(() => {
-    setLoading(false);
-  });
+  const order = async () => {
+    await fetch(`/api/beers/${beer.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ count: Math.max(0, beer.count - 1) }),
+    });
+    router.refresh();
+  };
 
   return (
     <Card className="flex flex-col justify-center items-center text-center w-[300px] h-[400px] overflow-hidden">
       <CardHeader className="py-12">
         <CardTitle className="flex flex-col gap-6 items-center justify-center">
           {beer.imageUrl ? (
-            <Image
-              className="object-contain w-64 h-48 rounded-lg"
-              src={beer.imageUrl}
-              alt=""
-              width={1000}
-              height={1000}
-            ></Image>
+            <Image className="object-contain w-64 h-48 rounded-lg" src={beer.imageUrl} alt="" width={1000} height={1000} />
           ) : (
-            <BeerIcon></BeerIcon>
+            <BeerIcon />
           )}
           <div className="flex justify-center gap-2 items-end align-baseline">
             <p className="text-xl">{truncateText(beer.name, 18)}</p>
@@ -37,14 +34,14 @@ export default function BeerCard({ beer }: { beer: Beer }) {
         </CardTitle>
       </CardHeader>
       <CardFooter className="flex w-full justify-between">
-        {beer.count > 0 ? (
-          <div className="flex items-center justify-center h-10 w-18 bg-green-100 px-6 rounded-lg text-center font-bold text-green-500 text-xl">
-            ✓
-          </div>
+        {showOrder ? (
+          <button onClick={order} className="flex items-center justify-center h-10 px-6 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700">
+            Order
+          </button>
+        ) : beer.count > 0 ? (
+          <div className="flex items-center justify-center h-10 w-18 bg-green-100 px-6 rounded-lg text-center font-bold text-green-500 text-xl">✓</div>
         ) : (
-          <div className="flex items-center justify-center h-10 w-18 bg-red-100 px-6 rounded-lg text-center font-bold text-red-500 text-xl">
-            ✘
-          </div>
+          <div className="flex items-center justify-center h-10 w-18 bg-red-100 px-6 rounded-lg text-center font-bold text-red-500 text-xl">✘</div>
         )}
         <div className="flex items-center justify-center h-10 w-18 border-2 border-red-600 px-6 rounded-lg text-center font-bold">
           {beer.count}

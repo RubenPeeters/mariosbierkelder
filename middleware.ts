@@ -1,38 +1,13 @@
-// catches every request to the application
-// checks for a valid session
-
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(req: NextRequest) {
-    const res = NextResponse.next()
-    
-    // specific pages that are public
-    // TODO: change to better expression
-
-    if (req.nextUrl.pathname === '/') {
-        return res
-    }
-
-    if (req.nextUrl.pathname === '/beers') {
-        return res
-    }
-
-    if (req.nextUrl.pathname === '/admin') {
-        return res
-    }
-    // stop people based on their session
-
-    const supabase = createMiddlewareClient({req, res})
-    const { data: { session }} = await supabase.auth.getSession()
-
-    if (!session) {
-        return NextResponse.rewrite(new URL('/login', req.url))
-    }
-
-    return res
+export function middleware(req: NextRequest) {
+  const session = req.cookies.get("admin-session");
+  if (session?.value !== process.env.ADMIN_PASSWORD) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/admin"],
 };

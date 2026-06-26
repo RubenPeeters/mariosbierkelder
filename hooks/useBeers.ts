@@ -1,49 +1,35 @@
-import { supabase } from "@/lib/supabase";
-import { Beer, BeerColorArray, BeerTypeArray } from "@/types";
+import { Beer } from "@/types";
 import { useState } from "react";
 
 export function useBeer() {
-    const [beer, setBeer] = useState<Beer>({
-        id: '',
-        name: 'A beer',
-        count: 0,
-        color: BeerColorArray[0],
-        percentage: 0,
-        type: BeerTypeArray[0],
-        imageUrl: "",
-    })
-
-    return {beer, setBeer}
+  const [beer, setBeer] = useState<Beer>({
+    id: "",
+    name: "A beer",
+    count: 0,
+    color: "amber",
+    percentage: 0,
+    type: "lager",
+    imageUrl: "",
+  });
+  return { beer, setBeer };
 }
 
 export const useBeers = () => {
-    const [loading, setLoading] = useState<boolean>(true);
-    const [beers, setBeers] = useState<Beer[]>([]);
-    const [success, setSuccess] = useState<boolean | undefined>(undefined)
-  
-    const getBeers = async () => {
-      try {
-        setLoading(true);
-        
-        const { data, error } = await supabase
-          .from('beers')
-          .select('*')
-        
-        if (data) setBeers(data)
-      } catch (error) {
-        console.log(error)
-      } finally {
-       setLoading(false)
-      }
+  const [loading, setLoading] = useState(true);
+  const [beers, setBeers] = useState<Beer[]>([]);
+
+  const getBeers = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/beers");
+      const data = await res.json();
+      setBeers(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-    return {
-        loading,
-        setLoading,
-        beers,
-        setBeers,
-        getBeers,
-        success,
-        setSuccess,
-        useBeer
-      }
-    }
+  };
+
+  return { loading, setLoading, beers, setBeers, getBeers };
+};

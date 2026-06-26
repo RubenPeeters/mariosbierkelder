@@ -1,20 +1,12 @@
 "use client";
 import { Beer } from "@/types";
-import { useEffect } from "react";
-import { useBeers } from "@/hooks/useBeers";
 import Image from "next/image";
 
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import BeerIcon from "./beer-icon";
 import { truncateText } from "@/lib/utils";
 
-export default function BeerCard({ beer }: { beer: Beer }) {
-  const { loading, setLoading } = useBeers();
-
-  useEffect(() => {
-    setLoading(false);
-  });
-
+export default function BeerCardEdit({ beer }: { beer: Beer }) {
   return (
     <Card className="flex flex-col justify-center items-center text-center w-[300px] h-[400px] overflow-hidden">
       <CardHeader className="py-12">
