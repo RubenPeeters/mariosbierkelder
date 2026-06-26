@@ -47,6 +47,12 @@ export const translations = {
     noDrinksAdmin: "No drinks yet. Add one above.",
     drinksServed: "drinks served",
     filterBy: "Filter",
+    yourName: "Your name (optional)",
+    writeReview: "Write a review (optional)",
+    submitReview: "Submit",
+    wrongAnswer: "Wrong answer, try again!",
+    reviews: "Reviews",
+    anonymous: "Anonymous",
   },
   nl: {
     home: "Home",
@@ -96,6 +102,12 @@ export const translations = {
     noDrinksAdmin: "Nog geen drankjes. Voeg er hierboven een toe.",
     drinksServed: "drankjes geserveerd",
     filterBy: "Filter",
+    yourName: "Je naam (optioneel)",
+    writeReview: "Schrijf een beoordeling (optioneel)",
+    submitReview: "Verstuur",
+    wrongAnswer: "Fout antwoord, probeer opnieuw!",
+    reviews: "Beoordelingen",
+    anonymous: "Anoniem",
   },
 } as const;
 

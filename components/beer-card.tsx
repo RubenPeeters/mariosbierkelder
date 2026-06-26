@@ -18,6 +18,7 @@ export default function BeerCard({ beer, showOrder = false }: { beer: Beer; show
 
   const order = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!confirm(`${t("order")} ${beer.name}?`)) return;
     setPending(true);
     const res = await fetch("/api/orders", {
       method: "POST",
