@@ -43,6 +43,7 @@ export default function BeerDetail({ beer, onClose }: { beer: Beer; onClose: () 
             <h2 className="text-2xl font-bold">{beer.name}</h2>
             <p className="text-sm text-muted-foreground mt-1">
               {beer.type} · {beer.percentage}% ABV
+              {beer.ibu ? ` · ${beer.ibu} IBU` : ""}
               {beer.brewery && ` · ${beer.brewery}`}
             </p>
             {beer.country && <p className="text-xs text-muted-foreground">{beer.country}</p>}

@@ -3,18 +3,21 @@ type CommonFields = {
   created_at?: string;
 };
 
-export const BeerColorArray = ["amber", "gold", "brown"];
-export const BeerTypeArray = ["lager", "ale", "stout", "wheat beer"];
+export const CategoryArray = ["beer", "wine", "spirit", "soft drink"] as const;
+export const BeerTypeArray = [
+  "lager", "pilsner", "ale", "ipa", "stout", "porter",
+  "wheat", "tripel", "dubbel", "saison", "sour", "other",
+] as const;
+export const BeerColorArray = ["pale", "golden", "amber", "brown", "dark"] as const;
 
-// export const AlcoholTypeArray = ["wine", "beer", "spirit", "liquor", "cider/perry", "mead"];
-// type BeverageType = typeof AlcoholTypeArray
-
-type BeerColor = typeof BeerColorArray[number];
-type BeerType = typeof BeerTypeArray[number];
+type Category = (typeof CategoryArray)[number];
+type BeerColor = (typeof BeerColorArray)[number];
+type BeerType = (typeof BeerTypeArray)[number];
 
 export type Beer = {
   name: string;
   count: number;
+  category: Category;
   color?: BeerColor;
   percentage: number;
   type: BeerType;
@@ -22,6 +25,7 @@ export type Beer = {
   description?: string;
   brewery?: string;
   country?: string;
+  ibu?: number;
 } & CommonFields;
 
 export type Rating = {

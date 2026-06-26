@@ -11,11 +11,11 @@ export async function POST(req: Request) {
   const denied = await assertAdmin();
   if (denied) return denied;
 
-  const { name, count, color, percentage, type, imageUrl, description, brewery, country } = await req.json();
+  const { name, count, color, percentage, type, imageUrl, description, brewery, country, category, ibu } = await req.json();
   const id = crypto.randomUUID();
   await turso.execute({
-    sql: "INSERT INTO beers (id, name, count, color, percentage, type, imageUrl, description, brewery, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-    args: [id, name, count ?? 0, color ?? null, percentage ?? 0, type, imageUrl ?? "", description ?? "", brewery ?? "", country ?? ""],
+    sql: "INSERT INTO beers (id, name, count, color, percentage, type, imageUrl, description, brewery, country, category, ibu) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    args: [id, name, count ?? 0, color ?? null, percentage ?? 0, type, imageUrl ?? "", description ?? "", brewery ?? "", country ?? "", category ?? "beer", ibu ?? null],
   });
   return NextResponse.json({ id }, { status: 201 });
 }

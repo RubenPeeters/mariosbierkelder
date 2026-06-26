@@ -6,6 +6,7 @@ export function useBeer() {
     id: "",
     name: "A beer",
     count: 0,
+    category: "beer",
     color: "amber",
     percentage: 0,
     type: "lager",

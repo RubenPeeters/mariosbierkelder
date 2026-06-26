@@ -5,7 +5,7 @@ import ImageUpload from "@/components/image-upload";
 import EveningSummary from "@/components/evening-summary";
 import { useBeers } from "@/hooks/useBeers";
 import { useOrders } from "@/hooks/useOrders";
-import { Beer, BeerColorArray, BeerTypeArray } from "@/types";
+import { Beer, BeerColorArray, BeerTypeArray, CategoryArray } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Check, Minus, Plus, Trash2, X } from "lucide-react";
@@ -23,13 +23,15 @@ export default function Admin() {
   const [form, setForm] = useState({
     name: "",
     count: 0,
-    color: BeerColorArray[0],
+    category: "beer" as string,
+    color: BeerColorArray[0] as string,
     percentage: 0,
-    type: BeerTypeArray[0],
+    type: BeerTypeArray[0] as string,
     imageUrl: "",
     description: "",
     brewery: "",
     country: "",
+    ibu: 0,
   });
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export default function Admin() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
-    setForm({ name: "", count: 0, color: BeerColorArray[0], percentage: 0, type: BeerTypeArray[0], imageUrl: "", description: "", brewery: "", country: "" });
+    setForm({ name: "", count: 0, category: "beer", color: BeerColorArray[0], percentage: 0, type: BeerTypeArray[0], imageUrl: "", description: "", brewery: "", country: "", ibu: 0 });
     setAdding(false);
     getBeers();
   };
@@ -131,6 +133,12 @@ export default function Admin() {
         <form onSubmit={addBeer} className="grid grid-cols-2 gap-3 mb-8 p-4 border rounded-xl bg-white shadow-sm">
           <input className="border rounded px-3 py-2 col-span-2" placeholder={t("name")} required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <label className="flex flex-col gap-1">
+            <span className="text-xs text-gray-500">{t("category")}</span>
+            <select className="border rounded px-3 py-2" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+              {CategoryArray.map((c) => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1">
             <span className="text-xs text-gray-500">{t("count")}</span>
             <input className="border rounded px-3 py-2" type="number" min={0} value={form.count} onChange={(e) => setForm({ ...form, count: Number(e.target.value) })} />
           </label>
@@ -138,12 +146,24 @@ export default function Admin() {
             <span className="text-xs text-gray-500">{t("abv")}</span>
             <input className="border rounded px-3 py-2" type="number" step="0.1" min={0} value={form.percentage} onChange={(e) => setForm({ ...form, percentage: Number(e.target.value) })} />
           </label>
-          <select className="border rounded px-3 py-2" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
-            {BeerTypeArray.map((t) => <option key={t} value={t}>{t}</option>)}
-          </select>
-          <select className="border rounded px-3 py-2" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })}>
-            {BeerColorArray.map((c) => <option key={c} value={c}>{c}</option>)}
-          </select>
+          {form.category === "beer" && (
+            <label className="flex flex-col gap-1">
+              <span className="text-xs text-gray-500">IBU</span>
+              <input className="border rounded px-3 py-2" type="number" min={0} value={form.ibu} onChange={(e) => setForm({ ...form, ibu: Number(e.target.value) })} />
+            </label>
+          )}
+          <label className="flex flex-col gap-1">
+            <span className="text-xs text-gray-500">{t("type")}</span>
+            <select className="border rounded px-3 py-2" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
+              {BeerTypeArray.map((bt) => <option key={bt} value={bt}>{bt.charAt(0).toUpperCase() + bt.slice(1)}</option>)}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="text-xs text-gray-500">{t("color")}</span>
+            <select className="border rounded px-3 py-2" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })}>
+              {BeerColorArray.map((c) => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
+            </select>
+          </label>
           <input className="border rounded px-3 py-2" placeholder={t("brewery")} value={form.brewery} onChange={(e) => setForm({ ...form, brewery: e.target.value })} />
           <input className="border rounded px-3 py-2" placeholder={t("country")} value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} />
           <textarea className="border rounded px-3 py-2 col-span-2" placeholder={t("description")} rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
