@@ -60,7 +60,7 @@ export default function BeerCard({ beer, showOrder = false }: { beer: Beer; show
             </div>
           </CardTitle>
         </CardHeader>
-        <CardFooter className="flex w-full justify-between">
+        <CardFooter className="flex w-full justify-between pb-6">
           {showOrder ? (
             orderId ? (
               <button onClick={(e) => { e.stopPropagation(); undo(); }} className="flex items-center justify-center min-h-[44px] px-6 bg-amber-500 text-white rounded-lg font-bold hover:bg-amber-600">
