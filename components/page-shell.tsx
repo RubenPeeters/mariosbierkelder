@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import DarkModeToggle from "./dark-mode-toggle";
 import LanguageToggle from "./language-toggle";
 import { useTranslation } from "@/providers/language";
 import { TranslationKey } from "@/lib/translations";
@@ -14,7 +13,6 @@ export default function PageShell({ title, titleKey, children, wide = false }: {
       <header className="fixed top-0 left-0 z-10 flex justify-between items-center w-full py-4 sm:py-10 px-4 sm:px-8 bg-background">
         <div className="flex items-center gap-2">
           <Link href="/" className="text-xs text-muted-foreground hover:text-foreground">{t("home")}</Link>
-          <DarkModeToggle />
           <LanguageToggle />
         </div>
         <h1 className="text-2xl sm:text-3xl font-semibold decoration-amber-600 underline">{displayTitle}</h1>

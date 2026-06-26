@@ -128,7 +128,7 @@ export default function Admin() {
       </div>
 
       {adding && (
-        <form onSubmit={addBeer} className="grid grid-cols-2 gap-3 mb-8 p-4 border rounded-xl bg-white dark:bg-card shadow-sm">
+        <form onSubmit={addBeer} className="grid grid-cols-2 gap-3 mb-8 p-4 border rounded-xl bg-white shadow-sm">
           <input className="border rounded px-3 py-2 col-span-2" placeholder={t("name")} required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <input className="border rounded px-3 py-2" type="number" placeholder={t("count")} min={0} value={form.count} onChange={(e) => setForm({ ...form, count: Number(e.target.value) })} />
           <input className="border rounded px-3 py-2" type="number" step="0.1" placeholder={t("abv")} min={0} value={form.percentage} onChange={(e) => setForm({ ...form, percentage: Number(e.target.value) })} />
@@ -151,9 +151,9 @@ export default function Admin() {
         <div className="flex flex-col gap-2">
           {beers.map((beer: Beer) => (
             <div key={beer.id} className={`flex items-center justify-between p-4 rounded-xl shadow-sm ${
-              beer.count === 0 ? "bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900" :
-              beer.count <= LOW_STOCK_THRESHOLD ? "bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900" :
-              "bg-white dark:bg-card"
+              beer.count === 0 ? "bg-red-50 border border-red-200" :
+              beer.count <= LOW_STOCK_THRESHOLD ? "bg-amber-50 border border-amber-200" :
+              "bg-white"
             }`}>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
