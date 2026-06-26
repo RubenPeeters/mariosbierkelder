@@ -76,6 +76,7 @@ export default function Admin() {
   };
 
   const deleteBeer = async (id: string) => {
+    if (!confirm("Are you sure you want to remove this from the catalogue?")) return;
     await fetch(`/api/beers/${id}`, { method: "DELETE" });
     getBeers();
   };
