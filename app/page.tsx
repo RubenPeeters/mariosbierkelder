@@ -2,8 +2,10 @@
 
 import { Beer } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/providers/language";
 
 export default function Home() {
+  const { t } = useTranslation();
   return (
     <div
       className="relative flex flex-col items-center justify-center min-h-screen bg-cover bg-center"
@@ -20,12 +22,12 @@ export default function Home() {
         <h1 className="text-5xl sm:text-7xl font-bold text-white tracking-tight">
           Mario&apos;s Bierkelder
         </h1>
-        <p className="text-lg text-amber-100/80">Welcome to the cellar</p>
+        <p className="text-lg text-amber-100/80">{t("welcome")}</p>
         <a
           href="/beers"
           className="mt-4 px-8 py-3 bg-amber-600 text-white font-bold rounded-xl text-lg hover:bg-amber-700 transition-colors"
         >
-          Enter the Cellar
+          {t("enterCellar")}
         </a>
       </motion.div>
     </div>

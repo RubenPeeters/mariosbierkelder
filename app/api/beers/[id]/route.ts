@@ -3,7 +3,7 @@ import { turso } from "@/lib/turso";
 import { InValue } from "@libsql/client";
 import { NextResponse } from "next/server";
 
-const ALLOWED_COLUMNS = new Set(["name", "count", "color", "percentage", "type", "imageUrl"]);
+const ALLOWED_COLUMNS = new Set(["name", "count", "color", "percentage", "type", "imageUrl", "description", "brewery", "country"]);
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const denied = await assertAdmin();

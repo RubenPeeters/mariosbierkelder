@@ -1,12 +1,14 @@
 "use client";
 import { Beer, BeerTypeArray } from "@/types";
 import { useState } from "react";
+import { useTranslation } from "@/providers/language";
 import BeerCard from "./beer-card";
 import OrderFeed from "./order-feed";
 
 type SortKey = "name" | "abv-asc" | "abv-desc";
 
 export default function BeerCellar({ beers }: { beers: Beer[] }) {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<string>("all");
   const [sort, setSort] = useState<SortKey>("name");
 
@@ -29,7 +31,7 @@ export default function BeerCellar({ beers }: { beers: Beer[] }) {
               filter === type ? "bg-amber-600 text-white" : "bg-white/80 text-gray-600 hover:bg-amber-100"
             }`}
           >
-            {type === "all" ? "All" : type.charAt(0).toUpperCase() + type.slice(1)}
+            {type === "all" ? t("all") : type.charAt(0).toUpperCase() + type.slice(1)}
           </button>
         ))}
         <select
@@ -48,7 +50,7 @@ export default function BeerCellar({ beers }: { beers: Beer[] }) {
           filtered.map((beer) => <BeerCard key={beer.id} beer={beer} showOrder />)
         ) : (
           <div className="text-center py-12 text-gray-400">
-            {beers.length > 0 ? "No beers match this filter." : "No beers yet."}
+            {beers.length > 0 ? t("noMatch") : t("noBeers")}
           </div>
         )}
       </div>

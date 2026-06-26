@@ -4,15 +4,20 @@ import Image from "next/image";
 import { useCallback, useState } from "react";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import BeerIcon from "./beer-icon";
+import BeerDetail from "./beer-detail";
 import Toast from "./ui/toast";
 import { truncateText } from "@/lib/utils";
+import { useTranslation } from "@/providers/language";
 
 export default function BeerCard({ beer, showOrder = false }: { beer: Beer; showOrder?: boolean }) {
+  const { t } = useTranslation();
   const [pending, setPending] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
 
-  const order = async () => {
+  const order = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     setPending(true);
     const res = await fetch("/api/orders", {
       method: "POST",
@@ -38,7 +43,10 @@ export default function BeerCard({ beer, showOrder = false }: { beer: Beer; show
 
   return (
     <>
-      <Card className="flex flex-col justify-center items-center text-center w-full sm:w-[300px] h-[350px] sm:h-[400px] overflow-hidden">
+      <Card
+        className="flex flex-col justify-center items-center text-center w-full sm:w-[300px] h-[350px] sm:h-[400px] overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+        onClick={() => setShowDetail(true)}
+      >
         <CardHeader className="py-8 sm:py-12">
           <CardTitle className="flex flex-col gap-4 sm:gap-6 items-center justify-center">
             {beer.imageUrl ? (
@@ -55,12 +63,12 @@ export default function BeerCard({ beer, showOrder = false }: { beer: Beer; show
         <CardFooter className="flex w-full justify-between">
           {showOrder ? (
             orderId ? (
-              <button onClick={undo} className="flex items-center justify-center min-h-[44px] px-6 bg-amber-500 text-white rounded-lg font-bold hover:bg-amber-600">
-                Undo
+              <button onClick={(e) => { e.stopPropagation(); undo(); }} className="flex items-center justify-center min-h-[44px] px-6 bg-amber-500 text-white rounded-lg font-bold hover:bg-amber-600">
+                {t("undo")}
               </button>
             ) : (
               <button onClick={order} disabled={pending} className="flex items-center justify-center min-h-[44px] px-6 bg-amber-600 text-white rounded-lg font-bold hover:bg-amber-700 disabled:opacity-50">
-                {pending ? "..." : "Order"}
+                {pending ? "..." : t("order")}
               </button>
             )
           ) : beer.count > 0 ? (
@@ -73,8 +81,9 @@ export default function BeerCard({ beer, showOrder = false }: { beer: Beer; show
           </div>
         </CardFooter>
       </Card>
+      {showDetail && <BeerDetail beer={beer} onClose={() => setShowDetail(false)} />}
       {showToast && (
-        <Toast message={`${beer.name} ordered!`} onUndo={undo} onDismiss={dismissToast} />
+        <Toast message={`${beer.name} ${t("ordered")}`} onUndo={undo} onDismiss={dismissToast} />
       )}
     </>
   );

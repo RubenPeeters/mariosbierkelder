@@ -3,8 +3,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import PageShell from "@/components/page-shell";
+import { useTranslation } from "@/providers/language";
 
 export default function Login() {
+  const { t } = useTranslation();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
@@ -25,18 +27,18 @@ export default function Login() {
   };
 
   return (
-    <PageShell title="LOGIN">
+    <PageShell title={t("login")}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-sm mx-auto pt-12">
         <input
           className="border rounded px-3 py-2"
           type="password"
-          placeholder="Admin password"
+          placeholder={t("adminPassword")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <Button type="submit">Log in</Button>
+        {error && <p className="text-red-500 text-sm">{t("wrongPassword")}</p>}
+        <Button type="submit">{t("logIn")}</Button>
       </form>
     </PageShell>
   );

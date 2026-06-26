@@ -19,6 +19,14 @@ export type Beer = {
   percentage: number;
   type: BeerType;
   imageUrl: string;
+  description?: string;
+  brewery?: string;
+  country?: string;
+} & CommonFields;
+
+export type Rating = {
+  beer_id: string;
+  score: number;
 } & CommonFields;
 
 export type Order = {

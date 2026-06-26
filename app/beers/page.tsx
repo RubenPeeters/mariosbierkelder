@@ -10,7 +10,7 @@ export default async function Beers() {
   const beers = (result.rows as unknown as Beer[]).filter((b) => b.count > 0);
 
   return (
-    <PageShell title="CELLAR" wide>
+    <PageShell titleKey="cellar" wide>
       <BeerCellar beers={beers} />
     </PageShell>
   );
