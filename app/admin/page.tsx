@@ -121,9 +121,10 @@ export default function Admin() {
             <div key={beer.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm">
               <div className="flex-1 min-w-0">
                 <p className="font-semibold">{truncateText(beer.name, 24)}</p>
-                <p className="text-xs text-gray-400">{beer.type} · {beer.percentage}%</p>
+                <p className="text-xs text-gray-400">{beer.type} · {beer.percentage}% ABV</p>
               </div>
               <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400 mr-1">Stock:</span>
                 <Button variant="outline" size="icon" onClick={() => setCount(beer, beer.count - 1)} disabled={beer.count === 0}>
                   <Minus className="w-4 h-4" />
                 </Button>
