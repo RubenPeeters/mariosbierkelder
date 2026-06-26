@@ -1,7 +1,7 @@
 "use client";
 import { Beer } from "@/types";
 import Image from "next/image";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import BeerIcon from "./beer-icon";
 import BeerDetail from "./beer-detail";
@@ -15,6 +15,11 @@ export default function BeerCard({ beer, showOrder = false }: { beer: Beer; show
   const [orderId, setOrderId] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
+  const [avg, setAvg] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/ratings?beerId=${beer.id}`).then(r => r.json()).then(d => setAvg(d.avg));
+  }, [beer.id, showDetail]);
 
   const order = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -55,9 +60,14 @@ export default function BeerCard({ beer, showOrder = false }: { beer: Beer; show
             ) : (
               <BeerIcon />
             )}
-            <div className="flex justify-center gap-2 items-end align-baseline">
-              <p className="text-xl">{truncateText(beer.name, 18)}</p>
-              <span className="text-xs text-gray-400">{beer.percentage}%</span>
+            <div className="flex flex-col items-center gap-0.5">
+              <div className="flex justify-center gap-2 items-end align-baseline">
+                <p className="text-xl">{truncateText(beer.name, 18)}</p>
+                <span className="text-xs text-gray-400">{beer.percentage}%</span>
+              </div>
+              {avg !== null && (
+                <span className="text-xs text-amber-500">{"★".repeat(Math.round(avg))}{"☆".repeat(5 - Math.round(avg))}</span>
+              )}
             </div>
           </CardTitle>
         </CardHeader>
