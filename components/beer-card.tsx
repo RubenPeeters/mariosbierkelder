@@ -1,52 +1,81 @@
 "use client";
 import { Beer } from "@/types";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import BeerIcon from "./beer-icon";
+import Toast from "./ui/toast";
 import { truncateText } from "@/lib/utils";
 
 export default function BeerCard({ beer, showOrder = false }: { beer: Beer; showOrder?: boolean }) {
-  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
+  const [showToast, setShowToast] = useState(false);
 
   const order = async () => {
-    await fetch(`/api/beers/${beer.id}`, {
-      method: "PATCH",
+    setPending(true);
+    const res = await fetch("/api/orders", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ count: Math.max(0, beer.count - 1) }),
+      body: JSON.stringify({ beerId: beer.id }),
     });
-    router.refresh();
+    if (res.ok) {
+      const { id } = await res.json();
+      setOrderId(id);
+      setShowToast(true);
+    }
+    setPending(false);
   };
 
+  const undo = async () => {
+    if (!orderId) return;
+    await fetch(`/api/orders/${orderId}`, { method: "DELETE" });
+    setOrderId(null);
+    setShowToast(false);
+  };
+
+  const dismissToast = useCallback(() => setShowToast(false), []);
+
   return (
-    <Card className="flex flex-col justify-center items-center text-center w-[300px] h-[400px] overflow-hidden">
-      <CardHeader className="py-12">
-        <CardTitle className="flex flex-col gap-6 items-center justify-center">
-          {beer.imageUrl ? (
-            <Image className="object-contain w-64 h-48 rounded-lg" src={beer.imageUrl} alt="" width={1000} height={1000} />
+    <>
+      <Card className="flex flex-col justify-center items-center text-center w-full sm:w-[300px] h-[350px] sm:h-[400px] overflow-hidden">
+        <CardHeader className="py-8 sm:py-12">
+          <CardTitle className="flex flex-col gap-4 sm:gap-6 items-center justify-center">
+            {beer.imageUrl ? (
+              <Image className="object-contain w-48 h-36 sm:w-64 sm:h-48 rounded-lg" src={beer.imageUrl} alt="" width={1000} height={1000} />
+            ) : (
+              <BeerIcon />
+            )}
+            <div className="flex justify-center gap-2 items-end align-baseline">
+              <p className="text-xl">{truncateText(beer.name, 18)}</p>
+              <span className="text-xs text-gray-400">{beer.percentage}%</span>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardFooter className="flex w-full justify-between">
+          {showOrder ? (
+            orderId ? (
+              <button onClick={undo} className="flex items-center justify-center min-h-[44px] px-6 bg-amber-500 text-white rounded-lg font-bold hover:bg-amber-600">
+                Undo
+              </button>
+            ) : (
+              <button onClick={order} disabled={pending} className="flex items-center justify-center min-h-[44px] px-6 bg-amber-600 text-white rounded-lg font-bold hover:bg-amber-700 disabled:opacity-50">
+                {pending ? "..." : "Order"}
+              </button>
+            )
+          ) : beer.count > 0 ? (
+            <div className="flex items-center justify-center h-10 w-18 bg-green-100 px-6 rounded-lg text-center font-bold text-green-500 text-xl">✓</div>
           ) : (
-            <BeerIcon />
+            <div className="flex items-center justify-center h-10 w-18 bg-red-100 px-6 rounded-lg text-center font-bold text-red-500 text-xl">✘</div>
           )}
-          <div className="flex justify-center gap-2 items-end align-baseline">
-            <p className="text-xl">{truncateText(beer.name, 18)}</p>
-            <span className="text-xs text-gray-400">{beer.percentage}%</span>
+          <div className="flex items-center justify-center min-h-[44px] w-18 border-2 border-amber-600 px-6 rounded-lg text-center font-bold">
+            {beer.count}
           </div>
-        </CardTitle>
-      </CardHeader>
-      <CardFooter className="flex w-full justify-between">
-        {showOrder ? (
-          <button onClick={order} className="flex items-center justify-center h-10 px-6 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700">
-            Order
-          </button>
-        ) : beer.count > 0 ? (
-          <div className="flex items-center justify-center h-10 w-18 bg-green-100 px-6 rounded-lg text-center font-bold text-green-500 text-xl">✓</div>
-        ) : (
-          <div className="flex items-center justify-center h-10 w-18 bg-red-100 px-6 rounded-lg text-center font-bold text-red-500 text-xl">✘</div>
-        )}
-        <div className="flex items-center justify-center h-10 w-18 border-2 border-red-600 px-6 rounded-lg text-center font-bold">
-          {beer.count}
-        </div>
-      </CardFooter>
-    </Card>
+        </CardFooter>
+      </Card>
+      {showToast && (
+        <Toast message={`${beer.name} ordered!`} onUndo={undo} onDismiss={dismissToast} />
+      )}
+    </>
   );
 }

@@ -1,28 +1,33 @@
 "use client";
 
 import { Beer } from "lucide-react";
-import { DirectionAwareHover } from "@/components/ui/direction-aware-hover";
+import { motion } from "framer-motion";
 
 export default function Home() {
-  const imageUrl =
-    "https://utfs.io/f/a471f2e7-dbdd-4d22-9786-961b0e03b152-tmljm1.webp";
   return (
-    <div className="flex flex-col justify-center items-center w-full bg-gray-100">
-      <header className="fixed top-0 left-0 flex justify-evenly items-center w-full py-10 bg-gray-100">
-        <h1 className="flex gap-2 text-3xl font-semibold decoration-red-600 underline align-baseline">
-          MARIO <Beer className="w-8 h-8"></Beer>
+    <div
+      className="relative flex flex-col items-center justify-center min-h-screen bg-cover bg-center"
+      style={{ backgroundImage: "url('/assets/images/beer-cellar.webp')" }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-amber-900/60" />
+      <motion.div
+        className="relative z-10 flex flex-col items-center gap-6 text-center px-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <Beer className="w-12 h-12 text-amber-400" />
+        <h1 className="text-5xl sm:text-7xl font-bold text-white tracking-tight">
+          Mario&apos;s Bierkelder
         </h1>
-      </header>
-      <main className="max-w-7xl bg-gray-100 h-screen">
+        <p className="text-lg text-amber-100/80">Welcome to the cellar</p>
         <a
           href="/beers"
-          className="h-full relative flex items-center justify-center px-4"
+          className="mt-4 px-8 py-3 bg-amber-600 text-white font-bold rounded-xl text-lg hover:bg-amber-700 transition-colors"
         >
-          <DirectionAwareHover imageUrl={imageUrl}>
-            <p className="font-bold ">Enter...</p>
-          </DirectionAwareHover>
+          Enter the Cellar
         </a>
-      </main>
+      </motion.div>
     </div>
   );
 }

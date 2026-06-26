@@ -1,15 +1,18 @@
 "use client";
 import Loading from "@/components/loading";
 import PageShell from "@/components/page-shell";
+import ImageUpload from "@/components/image-upload";
 import { useBeers } from "@/hooks/useBeers";
+import { useOrders } from "@/hooks/useOrders";
 import { Beer, BeerColorArray, BeerTypeArray } from "@/types";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Check, Minus, Plus, Trash2, X } from "lucide-react";
 import { truncateText } from "@/lib/utils";
 
 export default function Admin() {
   const { loading, beers, getBeers } = useBeers();
+  const { orders: pendingOrders, refresh: refreshOrders } = useOrders("pending", 5000);
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -24,12 +27,21 @@ export default function Admin() {
     getBeers();
   }, []);
 
-  const updateCount = async (beer: Beer, delta: number) => {
-    const newCount = Math.max(0, beer.count + delta);
+  const resolveOrder = async (orderId: string, status: "confirmed" | "rejected") => {
+    await fetch(`/api/orders/${orderId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+    refreshOrders();
+    if (status === "confirmed") getBeers();
+  };
+
+  const setCount = async (beer: Beer, newCount: number) => {
     await fetch(`/api/beers/${beer.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ count: newCount }),
+      body: JSON.stringify({ count: Math.max(0, newCount) }),
     });
     getBeers();
   };
@@ -53,7 +65,34 @@ export default function Admin() {
 
   return (
     <PageShell title="ADMIN">
-      <div className="flex justify-end mb-6">
+      {pendingOrders.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-sm font-bold text-gray-500 mb-3">Pending Orders ({pendingOrders.length})</h2>
+          <div className="flex flex-col gap-2">
+            {pendingOrders.map((order) => (
+              <div key={order.id} className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                <div>
+                  <p className="font-semibold">{order.beer_name}</p>
+                  <p className="text-xs text-gray-400">
+                    {new Date(order.created_at + "Z").toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button size="icon" onClick={() => resolveOrder(order.id, "confirmed")} className="bg-green-600 hover:bg-green-700">
+                    <Check className="w-4 h-4" />
+                  </Button>
+                  <Button size="icon" variant="destructive" onClick={() => resolveOrder(order.id, "rejected")}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-between items-center mb-6">
+        <a href="/qr" className="text-sm text-amber-600 hover:text-amber-700 font-medium">Show QR</a>
         <Button onClick={() => setAdding(!adding)}>
           {adding ? "Cancel" : "+ Add Beer"}
         </Button>
@@ -70,7 +109,7 @@ export default function Admin() {
           <select className="border rounded px-3 py-2" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })}>
             {BeerColorArray.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
-          <input className="border rounded px-3 py-2 col-span-2" placeholder="Image URL (optional)" value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} />
+          <ImageUpload value={form.imageUrl} onChange={(url) => setForm({ ...form, imageUrl: url })} />
           <Button type="submit" className="col-span-2">Save</Button>
         </form>
       )}
@@ -85,11 +124,17 @@ export default function Admin() {
                 <p className="text-xs text-gray-400">{beer.type} · {beer.percentage}%</p>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="icon" onClick={() => updateCount(beer, -1)} disabled={beer.count === 0}>
+                <Button variant="outline" size="icon" onClick={() => setCount(beer, beer.count - 1)} disabled={beer.count === 0}>
                   <Minus className="w-4 h-4" />
                 </Button>
-                <span className="w-8 text-center font-bold">{beer.count}</span>
-                <Button variant="outline" size="icon" onClick={() => updateCount(beer, 1)}>
+                <input
+                  type="number"
+                  className="w-14 text-center font-bold border rounded py-1"
+                  value={beer.count}
+                  min={0}
+                  onChange={(e) => setCount(beer, Number(e.target.value))}
+                />
+                <Button variant="outline" size="icon" onClick={() => setCount(beer, beer.count + 1)}>
                   <Plus className="w-4 h-4" />
                 </Button>
                 <Button variant="destructive" size="icon" onClick={() => deleteBeer(beer.id)}>

@@ -1,3 +1,4 @@
+import { assertAdmin } from "@/lib/auth";
 import { turso } from "@/lib/turso";
 import { InValue } from "@libsql/client";
 import { NextResponse } from "next/server";
@@ -5,6 +6,8 @@ import { NextResponse } from "next/server";
 const ALLOWED_COLUMNS = new Set(["name", "count", "color", "percentage", "type", "imageUrl"]);
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const denied = await assertAdmin();
+  if (denied) return denied;
   const { id } = await params;
   const body = await req.json();
   const sets: string[] = [];
@@ -26,6 +29,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 }
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const denied = await assertAdmin();
+  if (denied) return denied;
   const { id } = await params;
   await turso.execute({ sql: "DELETE FROM beers WHERE id = ?", args: [id] });
   return NextResponse.json({ ok: true });

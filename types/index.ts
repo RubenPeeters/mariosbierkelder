@@ -21,4 +21,11 @@ export type Beer = {
   imageUrl: string;
 } & CommonFields;
 
+export type Order = {
+  beer_id: string;
+  beer_name: string;
+  status: "pending" | "confirmed" | "rejected";
+  resolved_at?: string;
+} & CommonFields;
+
 export type User = { email: string } & CommonFields;

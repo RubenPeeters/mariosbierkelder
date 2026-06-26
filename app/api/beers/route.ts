@@ -1,3 +1,4 @@
+import { assertAdmin } from "@/lib/auth";
 import { turso } from "@/lib/turso";
 import { NextResponse } from "next/server";
 
@@ -7,6 +8,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const denied = await assertAdmin();
+  if (denied) return denied;
+
   const { name, count, color, percentage, type, imageUrl } = await req.json();
   const id = crypto.randomUUID();
   await turso.execute({
